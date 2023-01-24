@@ -1,209 +1,113 @@
-#!/usr/bin/env python3
-
-""" simple_pagination module """
-
-
+imple pagination """
 
 import csv
 
-from typing import List
+import math
 
-from typing import Tuple
+from typing import List, Tuple
 
 
 
 
 
-def index_range(page: int, page_size: int) -> Tuple[int, int]:
+class Server:
 
-        """
+        """Server class to paginate a database of popular baby names.
 
-                Args:
+            """
 
-                            page: the number of the page
+                DATA_FILE = "Popular_Baby_Names.csv"
 
-                                        page_size: the size of the page
 
-                                                Returns:
 
-                                                            A tuple of size two containing a start index and an end index
+                    def __init__(self):
 
-                                                                        corresponding to the range of indexes to return in a list for those
+                            self.__dataset = None
 
-                                                                                    particular pagination parameters.
 
-                                                                                        """
 
+                                def dataset(self) -> List[List]:
 
+                                        """Cached dataset
 
-                                                                                            return (page_size * (page - 1), page_size * page)
+                                                """
 
+                                                        if self.__dataset is None:
 
+                                                                    with open(self.DATA_FILE) as f:
 
+                                                                                    reader = csv.reader(f)
 
+                                                                                                    dataset = [row for row in reader]
 
-                                                                                        class Server:
+                                                                                                                self.__dataset = dataset[1:]
 
-                                                                                                """Server class to paginate a database of popular baby names.
 
-                                                                                                    """
 
-                                                                                                        DATA_FILE = "Popular_Baby_Names.csv"
+                                                                                                                        return self.__dataset
 
 
 
-                                                                                                            def __init__(self):
+                                                                                                                            def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
 
-                                                                                                                        self.__dataset = None
+                                                                                                                                    """
 
+                                                                                                                                                Get the page
 
+                                                                                                                                                            Args:
 
-                                                                                                                            def dataset(self) -> List[List]:
+                                                                                                                                                                                page: Current page
 
-                                                                                                                                        """Cached dataset
+                                                                                                                                                                                                page_size: Total size of the page
 
-                                                                                                                                                """
+                                                                                                                                                                                                            Return:
 
-                                                                                                                                                        if self.__dataset is None:
+                                                                                                                                                                                                                                List of the pagination done
 
-                                                                                                                                                                        with open(self.DATA_FILE) as f:
+                                                                                                                                                                                                                                        """
 
-                                                                                                                                                                                            reader = csv.reader(f)
+                                                                                                                                                                                                                                                assert isinstance(page, int) and page > 0
 
-                                                                                                                                                                                                            dataset = [row for row in reader]
+                                                                                                                                                                                                                                                        assert isinstance(page_size, int) and page_size > 0
 
-                                                                                                                                                                                                                        self.__dataset = dataset[1:]
 
 
+                                                                                                                                                                                                                                                                range: Tuple = index_range(page, page_size)
 
-                                                                                                                                                                                                                                return self.__dataset
+                                                                                                                                                                                                                                                                        pagination: List = self.dataset()
 
 
 
-                                                                                                                                                                                                                                def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
+                                                                                                                                                                                                                                                                                return (pagination[range[0]:range[1]])
 
-                                                                                                                                                                                                                                            """
 
-                                                                                                                                                                                                                                                        Args:
 
-                                                                                                                                                                                                                                                                        page: the number of the page
 
-                                                                                                                                                                                                                                                                                        page_size: the size of the page
 
-                                                                                                                                                                                                                                                                                                    Returns:
+                                                                                                                                                                                                                                                                                def index_range(page: int, page_size: int) -> Tuple[int, int]:
 
-                                                                                                                                                                                                                                                                                                                    The appropriate page of the dataset.
+                                                                                                                                                                                                                                                                                    """
 
-                                                                                                                                                                                                                                                                                                                            """
+                                                                                                                                                                                                                                                                                        Range of the page
 
-                                                                                                                                                                                                                                                                                                                                    assert type(page) is int and type(
+                                                                                                                                                                                                                                                                                            Args:
 
-                                                                                                                                                                                                                                                                                                                                                        page_size) is int and page > 0 and page_size > 0
+                                                                                                                                                                                                                                                                                                        page: Current page
 
+                                                                                                                                                                                                                                                                                                                page_size: Total size of the page
 
+                                                                                                                                                                                                                                                                                                                    Return:
 
-                                                                                                                                                                                                                                                                                                                                            return self.dataset()[slice(*index_range(page, page_size))#!/usr/bin/env python3
+                                                                                                                                                                                                                                                                                                                                tuple with the range start and end size page
 
-                                                                                                                                                                                                                                                                                                                                                    """ simple_pagination module """
+                                                                                                                                                                                                                                                                                                                                    """
 
 
 
-                                                                                                                                                                                                                                                                                                                                                    import csv
+                                                                                                                                                                                                                                                                                                                                        final_size: int = page * page_size
 
-                                                                                                                                                                                                                                                                                                                                                    from typing import List
+                                                                                                                                                                                                                                                                                                                                            start_size: int = final_size - page_size
 
-                                                                                                                                                                                                                                                                                                                                                    from typing import Tuple
 
 
-
-
-
-                                                                                                                                                                                                                                                                                                                                                    def index_range(page: int, page_size: int) -> Tuple[int, int]:
-
-                                                                                                                                                                                                                                                                                                                                                        """
-
-                                                                                                                                                                                                                                                                                                                                                                Args:
-
-                                                                                                                                                                                                                                                                                                                                                                            page: the number of the page
-
-                                                                                                                                                                                                                                                                                                                                                                                        page_size: the size of the page
-
-                                                                                                                                                                                                                                                                                                                                                                                                Returns:
-
-                                                                                                                                                                                                                                                                                                                                                                                                            A tuple of size two containing a start index and an end index
-
-                                                                                                                                                                                                                                                                                                                                                                                                                        corresponding to the range of indexes to return in a list for those
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                    particular pagination parameters.
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                        """
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                            return (page_size * (page - 1), page_size * page)
-
-
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                            class Server:
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                """Server class to paginate a database of popular baby names.
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    """
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        DATA_FILE = "Popular_Baby_Names.csv"
-
-
-
-                                                                                                                                                                                                                                                                                                                                                def __init__(self):
-
-                                                                                                                                                                                                                                                                                                                                                            self.__dataset = None
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                def dataset(self) -> List[List]:
-
-                                                                                                                                                                                                                                                                                                                                                                            """Cached dataset
-
-                                                                                                                                                                                                                                                                                                                                                                                    """
-
-                                                                                                                                                                                                                                                                                                                                                                                            if self.__dataset is None:
-
-                                                                                                                                                                                                                                                                                                                                                                                                            with open(self.DATA_FILE) as f:
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                reader = csv.reader(f)
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                dataset = [row for row in reader]
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            self.__dataset = dataset[1:]
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    return self.__dataset
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                """
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Args:
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            page: the number of the page
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            page_size: the size of the page
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Returns:
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        The appropriate page of the dataset.
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                """
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        assert type(page) is int and type(
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            page_size) is int and page > 0 and page_size > 0
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                return self.dataset()[slice(*index_range(page, page_size))]
+                                                                                                                                                                                                                                                                                                                                                return (start_size, final_size)
