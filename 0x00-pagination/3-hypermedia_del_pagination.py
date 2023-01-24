@@ -1,16 +1,11 @@
-#!/usr/bin/env python3
 
-"""
-
-Deletion-resilient hypermedia pagination
+n-resilient hypermedia pagination
 
 """
 
 
 
 import csv
-
-import math
 
 from typing import List, Dict
 
@@ -30,130 +25,104 @@ class Server:
 
                     def __init__(self):
 
-                                self.__dataset = None
+                            self.__dataset = None
 
-                                        self.__indexed_dataset = None
+                                    self.__indexed_dataset = None
 
 
 
-                                            def dataset(self) -> List[List]:
+                                        def dataset(self) -> List[List]:
 
-                                                        """Cached dataset
+                                                """Cached dataset
 
-                                                                """
+                                                        """
 
-                                                                        if self.__dataset is None:
+                                                                if self.__dataset is None:
 
-                                                                                        with open(self.DATA_FILE) as f:
+                                                                            with open(self.DATA_FILE) as f:
 
-                                                                                                            reader = csv.reader(f)
+                                                                                            reader = csv.reader(f)
 
-                                                                                                                            dataset = [row for row in reader]
+                                                                                                            dataset = [row for row in reader]
 
-                                                                                                                                        self.__dataset = dataset[1:]
+                                                                                                                        self.__dataset = dataset[1:]
 
 
 
-                                                                                                                                                return self.__dataset
+                                                                                                                                return self.__dataset
 
 
 
-                                                                                                                                                def indexed_dataset(self) -> Dict[int, List]:
+                                                                                                                                    def indexed_dataset(self) -> Dict[int, List]:
 
-                                                                                                                                                            """Dataset indexed by sorting position, starting at 0
+                                                                                                                                            """Dataset indexed by sorting position, starting at 0
 
-                                                                                                                                                                    """
+                                                                                                                                                    """
 
-                                                                                                                                                                            if self.__indexed_dataset is None:
+                                                                                                                                                            if self.__indexed_dataset is None:
 
-                                                                                                                                                                                            dataset = self.dataset()
+                                                                                                                                                                        dataset = self.dataset()
 
-                                                                                                                                                                                                        truncated_dataset = dataset[:1000]
+                                                                                                                                                                                    truncated_dataset = dataset[:1000]
 
-                                                                                                                                                                                                                    self.__indexed_dataset = {
+                                                                                                                                                                                                self.__indexed_dataset = {
 
-                                                                                                                                                                                                                                            i: dataset[i] for i in range(len(dataset))
+                                                                                                                                                                                                                i: dataset[i] for i in range(len(dataset))
 
-                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                            }
 
-                                                                                                                                                                                                                            return self.__indexed_dataset
+                                                                                                                                                                                                                                    return self.__indexed_dataset
 
 
 
-                                                                                                                                                                                                                            def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+                                                                                                                                                                                                                                        def get_hyper_index(self, index: int = None, page_size: int = 10):
 
-                                                                                                                                                                                                                                        """
+                                                                                                                                                                                                                                                """
 
-                                                                                                                                                                                                                                                    Get the hyper index
+                                                                                                                                                                                                                                                            Args:
 
-                                                                                                                                                                                                                                                                Args:
+                                                                                                                                                                                                                                                                                index: start index of the return page
 
-                                                                                                                                                                                                                                                                                index: Current page
+                                                                                                                                                                                                                                                                                                page_size: the size of the page
 
-                                                                                                                                                                                                                                                                                                page_size: Total size of the page
+                                                                                                                                                                                                                                                                                                            Returns:
 
-                                                                                                                                                                                                                                                                                                            Return:
+                                                                                                                                                                                                                                                                                                                                The hypermedia data about dataset with deletion handle.
 
-                                                                                                                                                                                                                                                                                                                            Hyper index
+                                                                                                                                                                                                                                                                                                                                        """
 
-                                                                                                                                                                                                                                                                                                                                    """
+                                                                                                                                                                                                                                                                                                                                                assert type(index) is int and type(
 
-                                                                                                                                                                                                                                                                                                                                            result_dataset = []
+                                                                                                                                                                                                                                                                                                                                                            page_size) is int and 0 <= index < len(self.indexed_dataset())
 
-                                                                                                                                                                                                                                                                                                                                                    index_data = self.indexed_dataset()
 
-                                                                                                                                                                                                                                                                                                                                                            keys_list = list(index_data.keys())
 
-                                                                                                                                                                                                                                                                                                                                                                    assert index + page_size < len(keys_list)
+                                                                                                                                                                                                                                                                                                                                                                    pages = []
 
-                                                                                                                                                                                                                                                                                                                                                                            assert index < len(keys_list)
+                                                                                                                                                                                                                                                                                                                                                                            next_index = index + page_size
 
 
 
-                                                                                                                                                                                                                                                                                                                                                                                    if index not in index_data:
+                                                                                                                                                                                                                                                                                                                                                                                    for i in range(index, index + page_size):
 
-                                                                                                                                                                                                                                                                                                                                                                                                    start_index = keys_list[index]
+                                                                                                                                                                                                                                                                                                                                                                                                if not self.indexed_dataset().get(i):
 
-                                                                                                                                                                                                                                                                                                                                                                                                            else:
+                                                                                                                                                                                                                                                                                                                                                                                                                i += 1
 
-                                                                                                                                                                                                                                                                                                                                                                                                                            start_index = index
+                                                                                                                                                                                                                                                                                                                                                                                                                                next_index += 1
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                            pages.append(self.indexed_dataset()[i])
 
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                    for i in range(start_index, start_index + page_size):
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    if i not in index_data:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    return {
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        result_dataset.append(index_data[keys_list[i]])
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                "index": index,
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "next_index": next_index,
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        result_dataset.append(index_data[i])
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "page_size": page_size,
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "data": pages
 
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                next_index: int = index + page_size
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if index in keys_list:
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        next_index
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                else:
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                next_index = keys_list[next_index]
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        return {
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            'index': index,
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'next_index': next_index,
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    'page_size': len(result_dataset),
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'data': result_dataset
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
