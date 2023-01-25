@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 
-"""  Basic dictionary """
+
+
+""" Basic Dictionary """
+
+
 
 from base_caching import BaseCaching
 
@@ -10,26 +14,22 @@ from base_caching import BaseCaching
 
 class BasicCache(BaseCaching):
 
-        """ Class that inherits from BaseCaching and is a caching system
-
-                This caching system doesn’t have limit """
-
-                    def put(self, key, item):
-
-                                """ Assign to the dictionary """
-
-                                        if key and item:
-
-                                                        self.cache_data[key] = item
+        """Basic dictionary"""
 
 
 
-                                                            def get(self, key):
+            def put(self, key, item):
 
-                                                                        """ Return the value linked """
+                        """Puts item in cache"""
 
-                                                                                if key is None or self.cache_data.get(key) is None:
+                                if key is not None and item is not None:
 
-                                                                                                return None
+                                                self.cache_data[key] = item
 
-                                                                                                    return self.cache_data.get(key)
+
+
+                                                    def get(self, key):
+
+                                                                """Gets item from cache"""
+
+                                                                        return self.cache_data.get(key, None)
