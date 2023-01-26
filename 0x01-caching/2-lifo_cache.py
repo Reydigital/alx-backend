@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
-""" LIFOCache module """
+""" LIFO Caching """
+
+
 
 from base_caching import BaseCaching
 
@@ -10,46 +12,72 @@ from base_caching import BaseCaching
 
 class LIFOCache(BaseCaching):
 
-        """ LIFOCache class that inherits from BaseCaching """
+        """ LIFO caching """
 
 
 
             def __init__(self):
 
-                        super().__init__()
+                        """ Constructor """
 
-                                self.last = ""
+                                super().__init__()
 
-
-
-                                    def put(self, key, item):
-
-                                                """ Add an item in the cache """
-
-                                                        if key and item:
-
-                                                                        self.cache_data[key] = item
+                                        self.queue = []
 
 
 
-                                                                                    if len(self.cache_data) > self.MAX_ITEMS:
+                                            def put(self, key, item):
 
-                                                                                                        print("DISCARD: {}".format(self.last))
+                                                        """ Puts item in cache """
 
-                                                                                                                        del self.cache_data[self.last]
+                                                                if key is None or item is None:
 
-
-
-                                                                                                                                    self.last = key
+                                                                                return
 
 
 
-                                                                                                                                        def get(self, key):
+                                                                                    self.cache_data[key] = item
 
-                                                                                                                                                    """ Get an item by key """
 
-                                                                                                                                                            if key and key in self.cache_data:
 
-                                                                                                                                                                            return self.cache_data.get(key)
+                                                                                            if len(self.cache_data) > BaseCaching.MAX_ITEMS:
 
-                                                                                                                                                                                return None
+                                                                                                            if self.queue:
+
+                                                                                                                                last = self.queue.pop()
+
+                                                                                                                                                del self.cache_data[last]
+
+                                                                                                                                                                print("DISCARD: {}".format(last))
+
+
+
+                                                                                                                                                                        if key not in self.queue:
+
+                                                                                                                                                                                        self.queue.append(key)
+
+                                                                                                                                                                                                else:
+
+                                                                                                                                                                                                                self.mv_last_list(key)
+
+
+
+                                                                                                                                                                                                                    def get(self, key):
+
+                                                                                                                                                                                                                                """ Gets item from cache """
+
+                                                                                                                                                                                                                                        return self.cache_data.get(key, None)
+
+
+
+                                                                                                                                                                                                                                        def mv_last_list(self, item):
+
+                                                                                                                                                                                                                                                    """ Moves element to last idx of list """
+
+                                                                                                                                                                                                                                                            length = len(self.queue)
+
+                                                                                                                                                                                                                                                                    if self.queue[length - 1] != item:
+
+                                                                                                                                                                                                                                                                                    self.queue.remove(item)
+
+                                                                                                                                                                                                                                                                                                self.queue.append(item)

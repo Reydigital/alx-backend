@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
-""" LRUCache module """
+""" LRU Caching """
+
+
 
 from base_caching import BaseCaching
 
@@ -10,136 +12,90 @@ from base_caching import BaseCaching
 
 class LRUCache(BaseCaching):
 
-        """ LRUCache class that inherits from BaseCaching """
+        """ LRU caching """
 
 
 
             def __init__(self):
 
-                        super().__init__()
+                        """ Constructor """
 
-                                self.history = []
+                                super().__init__()
 
+                                        self.queue = []
 
 
-                                    def put(self, key, item):
 
-                                                """ Add an item in the cache """
+                                            def put(self, key, item):
 
-                                                        if key and item:
+                                                        """ Puts item in cache """
 
-                                                                        self.cache_data[key] = item
+                                                                if key is None or item is None:
 
+                                                                                return
 
 
-                                                                                    if len(self.cache_data) > self.MAX_ITEMS:
 
-                                                                                                        toDelete = self.history[0]
+                                                                                    self.cache_data[key] = item
 
-                                                                                                                        print("DISCARD: {}".format(toDelete))
 
-                                                                                                                                        del self.cache_data[toDelete]
 
-                                                                                                                                                        self.history.pop(0)
+                                                                                            if len(self.cache_data) > BaseCaching.MAX_ITEMS:
 
+                                                                                                            first = self.get_first_list(self.queue)
 
+                                                                                                                        if first:
 
-                                                                                                                                                                    self.updateHistory(key)
+                                                                                                                                            self.queue.pop(0)
 
+                                                                                                                                                            del self.cache_data[first]
 
+                                                                                                                                                                            print("DISCARD: {}".format(first))
 
-                                                                                                                                                                        def get(self, key):
 
-                                                                                                                                                                                    """ Get an item by key """
 
-                                                                                                                                                                                            if key and key in self.cache_data:
+                                                                                                                                                                                    if key not in self.queue:
 
-                                                                                                                                                                                                            self.updateHistory(key)
+                                                                                                                                                                                                    self.queue.append(key)
 
-                                                                                                                                                                                                                        return self.cache_data.get(key)
+                                                                                                                                                                                                            else:
 
-                                                                                                                                                                                                                            return None
+                                                                                                                                                                                                                            self.mv_last_list(key)
 
 
 
-                                                                                                                                                                                                                            def updateHistory(self, key):
+                                                                                                                                                                                                                                def get(self, key):
 
-                                                                                                                                                                                                                                        """ Updates cache history """
+                                                                                                                                                                                                                                            """ Gets item from cache """
 
-                                                                                                                                                                                                                                                if key in self.history:
+                                                                                                                                                                                                                                                    item = self.cache_data.get(key, None)
 
-                                                                                                                                                                                                                                                                self.history.remove(key)
+                                                                                                                                                                                                                                                            if item is not None:
 
-                                                                                                                                                                                                                                                                        self.history.append(key)#!/usr/bin/python3
+                                                                                                                                                                                                                                                                            self.mv_last_list(key)
 
-                                                                                                                                                                                                                                                                        """ LRUCache module """
+                                                                                                                                                                                                                                                                                    return item
 
-                                                                                                                                                                                                                                                                        from base_caching import BaseCaching
 
 
+                                                                                                                                                                                                                                                                                    def mv_last_list(self, item):
 
+                                                                                                                                                                                                                                                                                                """ Moves element to last idx of list """
 
+                                                                                                                                                                                                                                                                                                        length = len(self.queue)
 
-                                                                                                                                                                                                                                                                        class LRUCache(BaseCaching):
+                                                                                                                                                                                                                                                                                                                if self.queue[length - 1] != item:
 
-                                                                                                                                                                                                                                                                                """ LRUCache class that inherits from BaseCaching """
+                                                                                                                                                                                                                                                                                                                                self.queue.remove(item)
 
+                                                                                                                                                                                                                                                                                                                                            self.queue.append(item)
 
 
-                                                                                                                                                                                                                                                                                    def __init__(self):
 
-                                                                                                                                                                                                                                                                                                super().__init__()
+                                                                                                                                                                                                                                                                                                                                                @staticmethod
 
-                                                                                                                                                                                                                                                                                                        self.history = []
+                                                                                                                                                                                                                                                                                                                                                    def get_first_list(array):
 
+                                                                                                                                                                                                                                                                                                                                                                """ Get first element of list or None """
 
-
-                                                                                                                                                                                                                                                                                                            def put(self, key, item):
-
-                                                                                                                                                                                                                                                                                                                        """ Add an item in the cache """
-
-                                                                                                                                                                                                                                                                                                                                if key and item:
-
-                                                                                                                                                                                                                                                                                                                                                self.cache_data[key] = item
-
-
-
-                                                                                                                                                                                                                                                                                                                                                            if len(self.cache_data) > self.MAX_ITEMS:
-
-                                                                                                                                                                                                                                                                                                                                                                                toDelete = self.history[0]
-
-                                                                                                                                                                                                                                                                                                                                                                                                print("DISCARD: {}".format(toDelete))
-
-                                                                                                                                                                                                                                                                                                                                                                                                                del self.cache_data[toDelete]
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                self.history.pop(0)
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                            self.updateHistory(key)
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                def get(self, key):
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            """ Get an item by key """
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if key and key in self.cache_data:
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    self.updateHistory(key)
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                return self.cache_data.get(key)
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    return None
-
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    def updateHistory(self, key):
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                """ Updates cache history """
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if key in self.history:
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        self.history.remove(key)
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                self.history.append(key)
+                                                                                                                                                                                                                                                                                                                                                                        return array[0] if array else None
